@@ -10,9 +10,11 @@ import kotlinx.coroutines.launch
 class AdminPanelViewModel(private val repository: AdminPanelRepository) : ViewModel() {
 
     val orders = MutableLiveData<List<List<Dish>>>()
+    val ordersIds = MutableLiveData<List<Int>>()
     fun getOrders() {
         viewModelScope.launch {
             orders.value = repository.getOrders()
+            getOrdersIds()
         }
     }
 
@@ -25,6 +27,12 @@ class AdminPanelViewModel(private val repository: AdminPanelRepository) : ViewMo
     fun acceptOrder(userId:Int, orderId:Int) {
         viewModelScope.launch{
             repository.acceptOrder(userId, orderId)
+        }
+    }
+
+    fun getOrdersIds(){
+        viewModelScope.launch {
+            ordersIds.value = repository.getOrdersIds()
         }
     }
 

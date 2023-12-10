@@ -27,7 +27,7 @@ class AdminPanelRepositoryImpl : AdminPanelRepository {
 
 
         val orders = mutableListOf<MutableList<Dish>>()
-        var ids = mutableListOf<IntArray>()
+        val ids = mutableListOf<IntArray>()
 
         var query = "SELECT * FROM client_cart WHERE "
         cc.forEach {
@@ -77,9 +77,22 @@ class AdminPanelRepositoryImpl : AdminPanelRepository {
     }
 
     override suspend fun acceptOrder(userId:Int, orderId:Int) {
-        Database().executeQuery("DELETE FROM client_cart WHERE user_id = $userId; DELETE FROM current_orders WHERE order_id = $orderId ;")
+        Database().executeQuery(" DELETE FROM current_orders WHERE order_id = $orderId; DELETE FROM client_cart WHERE id = $orderId;")
 
+    }
 
+    override suspend fun getOrdersIds(): List<Int> = withContext(Dispatchers.IO) {
+        val cc = mutableListOf<Int>()
+
+        Database().executeQuery("SELECT * FROM current_orders;").use {
+            if (it == null)
+                return@withContext emptyList<Int>()
+
+            while (it.next()) {
+                cc.add(it.getInt("order_id"))
+            }
+        }
+        return@withContext cc
     }
 
 

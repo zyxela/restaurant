@@ -6,4 +6,5 @@ interface AdminPanelRepository {
     suspend fun addDish(dish:String, description:String, price:Int, image:ByteArray)
     suspend fun getOrders():List<List<Dish>>?
     suspend fun acceptOrder(userId:Int, orderId:Int)
+    suspend fun getOrdersIds():List<Int>
 }
