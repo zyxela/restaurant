@@ -2,11 +2,23 @@ package com.example.restaurant.repositoryImpl
 
 import com.example.restaurant.data.Database
 import com.example.restaurant.entities.Dish
-import com.example.restaurant.repository.MenuRepository
+import com.example.restaurant.repository.EditMenuRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class MenuRepositoryImpl : MenuRepository {
+class EditMenuRepositoryImpl : EditMenuRepository {
+    override suspend fun addDishToMenu(dishId: Int) {
+        Database().executeQuery("INSERT INTO menu Values($dishId)")
+    }
+
+    override suspend fun editDish(dish: Dish) {
+        Database().executeQuery("UPDATE dish SET dish = '${dish.name}', description = '${dish.description}', price = ${dish.price} WHERE id = ${dish.id};")
+    }
+
+    override suspend fun removeDishToMenu(dish: Dish) {
+        Database().executeQuery("DELETE FROM menu where dish_id = ${dish.id}")
+    }
+
     override suspend fun getMenu(): List<Dish>? = withContext(Dispatchers.IO) {
         val menu = mutableListOf<Dish>()
         val ids = mutableListOf<Int>()
@@ -45,8 +57,31 @@ class MenuRepositoryImpl : MenuRepository {
 
     }
 
-    override suspend fun addToCart(ids: List<Int>, userId:Int) {
-        Database().addToCart(ids, userId)
-        //executeQuery("INSERT INTO client_cart(user_id, dish_id) VALUES ($userId, $ids);")
+    override suspend fun getDishes(): List<Dish>? = withContext(Dispatchers.IO) {
+
+        val menu = mutableListOf<Dish>()
+        val rs = Database().executeQuery("SELECT * FROM dish;")
+
+        rs.use {
+            if (it == null)
+                return@withContext null
+
+            while (it.next()) {
+
+                menu.add(
+                    Dish(
+                        it.getInt("id"),
+                        it.getString("dish"),
+                        it.getString("description"),
+                        it.getInt("price"),
+                        it.getBytes("image")
+                    )
+                )
+
+            }
+        }
+
+        return@withContext menu
     }
+
 }

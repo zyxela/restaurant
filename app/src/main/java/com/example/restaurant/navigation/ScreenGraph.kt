@@ -6,13 +6,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.restaurant.view.AdminPanel
 import com.example.restaurant.view.Cart
+import com.example.restaurant.view.EditMenu
 import com.example.restaurant.view.Enter
 import com.example.restaurant.view.Menu
 
 @Composable
 fun ScreenGraph() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Route.EnterRoute.route) {
+    NavHost(navController = navController, startDestination = Route.AdminPanelRoute.route) {
 
         composable(Route.EnterRoute.route) {
             Enter(navController)
@@ -28,6 +29,10 @@ fun ScreenGraph() {
 
         composable(Route.AdminPanelRoute.route){
             AdminPanel(navController)
+        }
+
+        composable(Route.EditMenuRoute.route){
+            EditMenu()
         }
     }
 }

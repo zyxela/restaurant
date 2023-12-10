@@ -1,5 +1,6 @@
 package com.example.restaurant.view
 
+import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -40,7 +43,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.restaurant.navigation.Route
 import com.example.restaurant.viewModels.EnterViewModel
 import org.koin.androidx.compose.getViewModel
 
@@ -76,9 +81,9 @@ fun Enter(navController: NavController) {
 
                 Card(modifier = Modifier.padding(16.dp)) {
                     if (Auth.entries[i] == Auth.SignIn) {
-                        SignIn()
+                        SignIn(viewModel, navController)
                     } else {
-                        SignUp()
+                        SignUp(viewModel, navController)
                     }
                 }
 
@@ -92,7 +97,10 @@ fun Enter(navController: NavController) {
 }
 
 @Composable
-internal fun SignIn() {
+internal fun SignIn(viewModel: EnterViewModel, navController: NavController) {
+    val context = LocalContext.current
+    val prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
+
     Column(verticalArrangement = Arrangement.Center) {
         Text(
             text = "Войти",
@@ -156,8 +164,17 @@ internal fun SignIn() {
             )
         )
 
-        Button(onClick = {
+        val enter by viewModel.enter.observeAsState(false)
+        if (enter){
+            if (prefs.getBoolean("USER_STATUS", false)){
+                navController.navigate(Route.AdminPanelRoute.route)
+            }else{
+                navController.navigate(Route.MenuRoute.route)
+            }
+        }
 
+        Button(onClick = {
+            viewModel.auth(loginText, password, context)
         }) {
             Text(
                 text = "Войти",
@@ -172,7 +189,10 @@ internal fun SignIn() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SignUp() {
+internal fun SignUp(viewModel: EnterViewModel, navController: NavController) {
+
+    val context = LocalContext.current
+    val prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
     Column(verticalArrangement = Arrangement.Center) {
         Text(
             text = "Регистрация",
@@ -264,11 +284,20 @@ internal fun SignUp() {
             )
         )
 
+        val enter by viewModel.enter.observeAsState(false)
+        if (enter){
+            if (prefs.getBoolean("USER_STATUS", false)){
+                navController.navigate(Route.AdminPanelRoute.route)
+            }else{
+                navController.navigate(Route.MenuRoute.route)
+            }
+        }
+
 
         Button(
             enabled = password == passwordConfirm && password != "" && loginText != "",
             onClick = {
-
+                viewModel.regist(loginText, password, context)
             }) {
             Text(
                 text = "Зарегистрироваться",
