@@ -14,7 +14,7 @@ class EnterViewModel(private val repository:EnterRepository):ViewModel() {
 
     fun auth(login: String, password: String, context: Context) {
         viewModelScope.launch {
-            repository.auth(login, password, context)
+            enter.value = repository.auth(login, password, context)
         }
     }
 

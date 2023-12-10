@@ -22,8 +22,10 @@ class AdminPanelViewModel(private val repository: AdminPanelRepository) : ViewMo
         }
     }
 
-    fun acceptOrder() {
-
+    fun acceptOrder(userId:Int, orderId:Int) {
+        viewModelScope.launch{
+            repository.acceptOrder(userId, orderId)
+        }
     }
 
 

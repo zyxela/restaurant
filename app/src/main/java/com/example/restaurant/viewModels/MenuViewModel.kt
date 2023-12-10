@@ -11,7 +11,7 @@ class MenuViewModel(private val repository:MenuRepository):ViewModel(){
 
     val menu = MutableLiveData<List<Dish>>()
     val selected = MutableLiveData<IntArray>()
-
+    val isCartEmpty = MutableLiveData<Boolean>()
     fun getMenu(){
         viewModelScope.launch {
           menu.value =  repository.getMenu()
@@ -22,6 +22,13 @@ class MenuViewModel(private val repository:MenuRepository):ViewModel(){
     fun addToCart(ids:List<Int>, userId:Int){
         viewModelScope.launch {
             repository.addToCart(ids, userId)
+            checkCart(userId)
+        }
+    }
+
+    fun checkCart(userId:Int){
+        viewModelScope.launch {
+            isCartEmpty.value = repository.checkCart(userId)
         }
     }
 }

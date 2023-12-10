@@ -1,5 +1,6 @@
 package com.example.restaurant.view
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -98,6 +99,9 @@ fun CurrentOrders(viewModel: AdminPanelViewModel) {
     val order by viewModel.orders.observeAsState(emptyList())
     viewModel.getOrders()
 
+    val context = LocalContext.current
+    val prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
+
     var dialog by remember {
         mutableStateOf(true)
     }
@@ -108,9 +112,11 @@ fun CurrentOrders(viewModel: AdminPanelViewModel) {
             Card {
                 LazyRow(modifier = Modifier.fillMaxWidth()) {
                     items(order.size) { i ->
+                        var ord  = 0
                         Column(modifier = Modifier.padding(4.dp)) {
                             LazyColumn {
                                 items(order[i].size) { ordr ->
+                                    ord = order[i][ordr].id
                                     Text(text = order[i][ordr].name)
                                 }
                             }
@@ -118,7 +124,7 @@ fun CurrentOrders(viewModel: AdminPanelViewModel) {
                             Button(
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
                                 onClick = {
-
+                                    viewModel.acceptOrder(prefs.getInt("USER_ID", 3), ord)
                                 }) {
                                 Text(text = "Принять")
                             }

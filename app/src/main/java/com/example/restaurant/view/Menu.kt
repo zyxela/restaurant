@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,7 +58,8 @@ fun Menu(navController: NavController) {
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
 
-
+    val showRedDot by viewModel.isCartEmpty.observeAsState(false)
+    viewModel.checkCart(prefs.getInt("USER_ID", 3))
 
     Column(
         modifier = Modifier
@@ -65,13 +67,27 @@ fun Menu(navController: NavController) {
             .padding(6.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
-            Icon(
-                modifier = Modifier.clickable {
-                    navController.navigate(Route.CartRoute.route)
-                },
-                imageVector = Icons.Default.ShoppingCart,
-                contentDescription = "MyCart"
-            )
+            Box{
+                Icon(
+                    modifier = Modifier.clickable {
+                        navController.navigate(Route.CartRoute.route)
+                    },
+                    imageVector = Icons.Default.ShoppingCart,
+                    contentDescription = "MyCart"
+                )
+                if (showRedDot) {
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .background(Color.Red, shape = CircleShape)
+                            .align(Alignment.TopEnd)
+                            .offset(x = 8.dp, y = -8.dp)
+                    ) {
+                        // Пустой блок для отображения красной точки
+                    }
+                }
+            }
+
         }
         val selected by viewModel.selected.observeAsState()
 

@@ -76,5 +76,11 @@ class AdminPanelRepositoryImpl : AdminPanelRepository {
         return@withContext orders
     }
 
+    override suspend fun acceptOrder(userId:Int, orderId:Int) {
+        Database().executeQuery("DELETE FROM client_cart WHERE user_id = $userId; DELETE FROM current_orders WHERE order_id = $orderId ;")
+
+
+    }
+
 
 }

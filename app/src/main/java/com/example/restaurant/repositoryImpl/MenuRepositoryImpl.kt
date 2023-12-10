@@ -49,4 +49,15 @@ class MenuRepositoryImpl : MenuRepository {
         Database().addToCart(ids, userId)
         //executeQuery("INSERT INTO client_cart(user_id, dish_id) VALUES ($userId, $ids);")
     }
+
+    override suspend fun checkCart(userId: Int): Boolean {
+        Database().executeQuery("SELECT * FROM client_cart where user_id = $userId").use {
+            if (it == null)
+                return false
+            while (it.next()){
+                return true
+            }
+        }
+        return false
+    }
 }

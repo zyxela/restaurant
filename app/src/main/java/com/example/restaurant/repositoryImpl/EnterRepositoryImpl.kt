@@ -21,7 +21,7 @@ class EnterRepositoryImpl : EnterRepository {
                     if (it.getString("login") == login && it.getString("password") == password) {
                         val userid = it.getString("id").toInt()
                         sharedPreferences.edit().putInt("USER_ID", userid).apply()
-                        val status = it.getString("role") == "2"
+                        val status = it.getString("role") != "2"
                         sharedPreferences.edit().putBoolean("USER_STATUS", status).apply()
                         return@withContext true
                     }
@@ -50,7 +50,7 @@ class EnterRepositoryImpl : EnterRepository {
                     if (users.getString("login") == login) {
                         val userid = users.getString("id").toInt()
                         sharedPreferences.edit().putInt("USER_ID", userid).apply()
-                        val status = users.getString("role") == "2"
+                        val status = users.getString("role") != "2"
                         sharedPreferences.edit().putBoolean("USER_STATUS", status).apply()
                     }
                 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.restaurant.utils.PDFMaker
 import com.example.restaurant.viewModels.CartViewModel
 import org.koin.androidx.compose.getViewModel
 
@@ -37,7 +38,13 @@ fun Cart(navController: NavController) {
     val total by viewModel.total.observeAsState(0)
     viewModel.total(prefs.getInt("USER_ID", 3))
 
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
+    var cheque = "<html><body><h1><pre>"
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -53,6 +60,7 @@ fun Cart(navController: NavController) {
                 LazyColumn {
                     items(cart.size) { i ->
                         Text(text = "${cart[i].name}.....${cart[i].price}")
+                        cheque += "${cart[i].name}.....${cart[i].price}<br>"
                     }
                 }
                 Text(text = "Итого..........${total}", fontWeight = FontWeight(500))
@@ -60,8 +68,11 @@ fun Cart(navController: NavController) {
 
 
         }
+        cheque += "<br><br>Итого..........${total}</pre></h1></body></html>"
         Button(onClick = {
             viewModel.makeOrder(prefs.getInt("USER_ID", 3))
+
+            PDFMaker.generatePdf(cheque, "${context.getExternalFilesDir("downloads")}/cheque.pdf")
         }) {
             Text(text = "Забронировать столик")
         }

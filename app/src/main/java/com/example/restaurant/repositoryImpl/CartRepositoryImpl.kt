@@ -62,12 +62,17 @@ class CartRepositoryImpl : CartRepository {
         var ids = IntArray(0)
         val getIds = Database().executeQuery("SELECT * FROM client_cart where user_id = $userId;")
         getIds.use {
-            if (it == null)
+            if (it == null) {
                 return@withContext 0
+            }
 
-            while (it.next())
+            while (it.next()) {
                 ids = (it.getArray("dish_id").array as Array<*>).map { it.toString().toInt() }
                     .toIntArray()
+            }
+
+            if (ids.isEmpty())
+                return@withContext 0
         }
 
 

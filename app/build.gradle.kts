@@ -79,6 +79,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
 
+    implementation ("com.itextpdf:itext7-core:7.1.15")
+    implementation ("com.itextpdf:html2pdf:3.0.5")
+
 
 
 }

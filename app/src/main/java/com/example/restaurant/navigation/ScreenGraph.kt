@@ -13,7 +13,7 @@ import com.example.restaurant.view.Menu
 @Composable
 fun ScreenGraph() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Route.AdminPanelRoute.route) {
+    NavHost(navController = navController, startDestination = Route.EnterRoute.route) {
 
         composable(Route.EnterRoute.route) {
             Enter(navController)
